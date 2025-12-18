@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+</head>
+
+<body style="font-family:Arial; background:#eef2f3; text-align:center; padding-top:80px;">
+<a href="../index.html" style="
+  background:white;
+  color:#1e88e5;
+  padding:6px 12px;
+  border-radius:4px;
+  text-decoration:none;
+  font-size:14px;
+">
+  Home
+</a>
+
+<h2>Register</h2>
+
+<input id="name" placeholder="Full Name"
+ style="padding:10px; width:250px; margin:5px;"><br>
+
+<input id="email" placeholder="Email"
+ style="padding:10px; width:250px; margin:5px;"><br>
+
+<input id="password" type="password" placeholder="Password"
+ style="padding:10px; width:250px; margin:5px;"><br>
+
+<select id="role"
+ style="padding:10px; width:270px; margin:5px;">
+  <option value="student">Student</option>
+  <option value="admin">Admin</option>
+</select><br><br>
+
+<button onclick="registerUser()"
+ style="padding:10px 20px; background:#2980b9; color:white; border:none;">
+ Register
+</button>
+<button onclick="googleRegister()" style="
+  padding:10px 20px;
+  background:#db4437;
+  color:white;
+  border:none;
+  margin-top:10px;
+">
+  Register with Google
+</button>
+
+
+<!-- FIREBASE FILE -->
+<script type="module" src="firebase.js"></script>
+
+<script type="module">
+import { createUserWithEmailAndPassword } from 
+"https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { doc, setDoc } from 
+"https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+window.registerUser = async function () {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const role = document.getElementById("role").value;
+
+  const userCred = await createUserWithEmailAndPassword(auth, email, password);
+
+  await setDoc(doc(db, "users", userCred.user.uid), {
+    name,
+    email,
+    role
+  });
+
+  alert("Registration Successful");
+  window.location.href = "login.html";
+};
+</script>
+<script type="module">
+import { 
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+import { doc, setDoc, getDoc } 
+from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+/* NORMAL REGISTER (already present) */
+window.registerUser = async function () {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const role = document.getElementById("role").value;
+
+  const userCred = await createUserWithEmailAndPassword(auth, email, password);
+
+  await setDoc(doc(db, "users", userCred.user.uid), {
+    name,
+    email,
+    role
+  });
+
+  window.location.href = "login.html";
+};
+
+/* GOOGLE REGISTER */
+window.googleRegister = async function () {
+  const provider = new GoogleAuthProvider();
+  const result = await signInWithPopup(auth, provider);
+
+  const user = result.user;
+
+  await setDoc(doc(db, "users", user.uid), {
+    name: user.displayName,
+    email: user.email,
+    role: "student"
+  });
+
+  window.location.href = "../dashboard/student.html";
+};
+</script>
+
+
+</body>
+</html>
