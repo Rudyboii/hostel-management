@@ -1,49 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
+  <meta charset="UTF-8">
+  <title>Login | Smart Hostel</title>
 </head>
 
-<body style="margin:0;font-family:Arial;background:#f4f8fb;">
+<body style="
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#0d47a1;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+">
 
-<div style="background:#0d47a1;color:white;padding:15px 40px;
-display:flex;justify-content:space-between;">
-  <h3>Smart Hostel</h3>
-  <a href="../index.html" style="color:white;text-decoration:none;">Home</a>
+<!-- POPUP CARD -->
+<div style="
+  background:white;
+  width:380px;
+  padding:35px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+">
+
+  <h2 style="color:#0d47a1;margin-bottom:10px;">
+    Smart Hostel Login
+  </h2>
+
+  <p style="color:#555;margin-bottom:25px;">
+    Continue using your Google account
+  </p>
+
+  <!-- GOOGLE BUTTON -->
+  <button id="googleBtn" style="
+    width:100%;
+    padding:14px;
+    background:#db4437;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+  ">
+    Continue with Google
+  </button>
+
+  <p style="margin-top:20px;font-size:13px;color:#777;">
+    Secure login powered by Firebase
+  </p>
+
+  <a href="../index.html" style="
+    display:inline-block;
+    margin-top:15px;
+    color:#0d47a1;
+    text-decoration:none;
+    font-size:14px;
+  ">
+    ← Back to Home
+  </a>
+
 </div>
 
-<div style="display:flex;justify-content:center;align-items:center;height:85vh;">
-  <div style="background:white;padding:30px;width:350px;border-radius:8px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);">
-
-    <h2 style="text-align:center;color:#0d47a1;">Login</h2>
-
-    <input id="email" type="email" placeholder="Email"
-      style="width:100%;padding:10px;margin:8px 0;">
-
-    <input id="password" type="password" placeholder="Password"
-      style="width:100%;padding:10px;margin:8px 0;">
-
-    <button onclick="loginUser()"
-      style="width:100%;padding:10px;background:#0d47a1;color:white;border:none;">
-      Login
-    </button>
-
-    <hr style="margin:20px 0;">
-
-    <button onclick="googleLogin()"
-      style="width:100%;padding:10px;background:#db4437;color:white;border:none;">
-      Sign in with Google
-    </button>
-
-  </div>
-</div>
-
-<script type="module" src="../js/config.js"></script>
-
+<!-- GOOGLE LOGIN LOGIC -->
 <script type="module">
+import { auth, db } from "../src/config.js";
+
 import {
-  signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
@@ -52,43 +76,54 @@ import {
   doc, getDoc, setDoc
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-/* EMAIL LOGIN */
-window.loginUser = async function () {
-  const userCred = await signInWithEmailAndPassword(
-    auth, email.value, password.value
-  );
-  redirectUser(userCred.user.uid);
-};
+const btn = document.getElementById("googleBtn");
+let popupInProgress = false;
 
-/* GOOGLE LOGIN */
-window.googleLogin = async function () {
-  const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
+btn.addEventListener("click", async () => {
+  if (popupInProgress) return;
+  popupInProgress = true;
 
-  const ref = doc(db, "users", result.user.uid);
-  const snap = await getDoc(ref);
+  btn.disabled = true;
+  btn.innerText = "Signing in...";
 
-  if (!snap.exists()) {
-    await setDoc(ref, {
-      name: result.user.displayName,
-      email: result.user.email,
-      role: "student"
-    });
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+
+    const user = result.user;
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    // First-time login → save user
+    if (!snap.exists()) {
+      await setDoc(userRef, {
+        name: user.displayName,
+        email: user.email,
+        role: "student"
+      });
+    }
+
+    // Redirect based on role
+    const finalSnap = await getDoc(userRef);
+    const role = finalSnap.data().role;
+
+    if (role === "admin") {
+      window.location.href = "../dashboard/admin.html";
+    } else {
+      window.location.href = "../dashboard/student.html";
+    }
+
+  } catch (err) {
+    popupInProgress = false;
+    btn.disabled = false;
+    btn.innerText = "Continue with Google";
+
+    // Ignore harmless cancel popup error
+    if (err.code !== "auth/cancelled-popup-request") {
+      alert(err.message);
+    }
   }
-
-  redirectUser(result.user.uid);
-};
-
-async function redirectUser(uid) {
-  const userDoc = await getDoc(doc(db, "users", uid));
-  const role = userDoc.data().role;
-
-  if (role === "admin") {
-    window.location.href = "../dashboard/admin.html";
-  } else {
-    window.location.href = "../dashboard/student.html";
-  }
-}
+});
 </script>
 
 </body>

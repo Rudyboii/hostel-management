@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebas
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-/* Firebase Configuration */
 const firebaseConfig = {
   apiKey: "AIzaSyDJJTZP3OhQsx3hOLnFac6HCxqmGvZMVcQ",
   authDomain: "hostel-management-dbatu.firebaseapp.com",
@@ -13,9 +12,8 @@ const firebaseConfig = {
   measurementId: "G-Z989KSB7WP"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Make services globally available
-window.auth = getAuth(app);
-window.db = getFirestore(app);
+/* ✅ EXPORT THESE */
+export const auth = getAuth(app);
+export const db = getFirestore(app);
