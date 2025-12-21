@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Complaints | Smart Hostel</title>
+</head>
+
+<body style="
+  margin:0;
+  font-family:'Segoe UI', Arial, sans-serif;
+  background:#eef3f9;
+  color:#222;
+">
+
+<!-- ================= HEADER ================= -->
+<div style="
+  background:#0d47a1;
+  color:white;
+  padding:16px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+">
+  <h3 style="margin:0;">Complaints</h3>
+  <a href="javascript:history.back()" style="
+    color:white;
+    text-decoration:none;
+    font-size:14px;
+  ">
+    ← Back
+  </a>
+</div>
+
+<!-- ================= HERO ================= -->
+<div style="
+  max-width:900px;
+  margin:40px auto 20px;
+  padding:0 20px;
+">
+  <div style="
+    background:linear-gradient(135deg,#1976d2,#42a5f5);
+    color:white;
+    padding:32px;
+    border-radius:20px;
+    box-shadow:0 18px 40px rgba(0,0,0,0.15);
+  ">
+    <h1 style="margin:0;">Raise a Complaint</h1>
+    <p style="margin-top:10px;opacity:0.95;">
+      Report hostel issues so they can be resolved quickly
+    </p>
+  </div>
+</div>
+
+<!-- ================= FORM SECTION ================= -->
+<div style="
+  max-width:900px;
+  margin:30px auto 60px;
+  padding:0 20px;
+">
+
+  <div style="
+    background:white;
+    padding:36px;
+    border-radius:18px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.08);
+  ">
+
+    <h2 style="margin-top:0;">Complaint Details</h2>
+
+    <!-- COMPLAINT TYPE -->
+    <label style="font-weight:600;">Complaint Type</label>
+    <select style="
+      width:100%;
+      padding:12px;
+      margin:10px 0 22px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      font-size:14px;
+    ">
+      <option value="">Select issue type</option>
+      <option>Water Problem</option>
+      <option>Electricity Issue</option>
+      <option>Cleanliness</option>
+      <option>Internet / WiFi</option>
+      <option>Furniture / Room Issue</option>
+      <option>Other</option>
+    </select>
+
+    <!-- LOCATION -->
+    <label style="font-weight:600;">Location / Room Number</label>
+    <input
+      type="text"
+      placeholder="e.g. Room 203"
+      style="
+        width:100%;
+        padding:12px;
+        margin:10px 0 22px;
+        border-radius:8px;
+        border:1px solid #ccc;
+        font-size:14px;
+      "
+    >
+
+    <!-- DESCRIPTION -->
+    <label style="font-weight:600;">Description</label>
+    <textarea
+      placeholder="Describe the issue clearly"
+      style="
+        width:100%;
+        height:120px;
+        padding:12px;
+        margin:10px 0 30px;
+        border-radius:8px;
+        border:1px solid #ccc;
+        font-size:14px;
+        resize:none;
+      "
+    ></textarea>
+
+    <!-- SUBMIT BUTTON -->
+    <button style="
+      background:#0d47a1;
+      color:white;
+      border:none;
+      padding:14px 34px;
+      border-radius:10px;
+      font-size:15px;
+      cursor:pointer;
+      transition:background 0.2s ease;
+    "
+    onmouseover="this.style.background='#08306b'"
+    onmouseout="this.style.background='#0d47a1'"
+    >
+      Submit Complaint
+    </button>
+
+  </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<div style="
+  background:#0d47a1;
+  color:white;
+  text-align:center;
+  padding:15px;
+  font-size:14px;
+">
+  Smart Hostel Management System
+</div>
+
+</body>
+</html>

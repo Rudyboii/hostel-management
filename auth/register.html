@@ -1,94 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Register</title>
+  <meta charset="UTF-8">
+  <title>Register | Smart Hostel</title>
 </head>
 
-<body style="margin:0;font-family:Arial;background:#f4f8fb;">
+<body style="
+  margin:0;
+  font-family:'Segoe UI', Arial, sans-serif;
+  background:linear-gradient(135deg,#1976d2,#42a5f5);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+">
 
-<div style="background:#0d47a1;color:white;padding:15px 40px;
-display:flex;justify-content:space-between;">
-  <h3>Smart Hostel</h3>
-  <a href="../index.html" style="color:white;text-decoration:none;">Home</a>
+<div style="
+  background:white;
+  padding:40px;
+  width:380px;
+  border-radius:22px;
+  text-align:center;
+  box-shadow:0 25px 60px rgba(0,0,0,0.25);
+">
+
+  <h2>Create Account 👋</h2>
+  <p style="color:#555;">
+    Register to use hostel services
+  </p>
+
+  <!-- REGISTER BUTTON -->
+  <button
+    id="googleRegister"
+    style="
+      margin-top:30px;
+      width:100%;
+      padding:14px;
+      background:#0d47a1;
+      color:white;
+      border:none;
+      border-radius:12px;
+      font-size:15px;
+      cursor:pointer;
+    "
+  >
+    Register with Google
+  </button>
+
+  <p style="margin-top:25px;font-size:14px;">
+    Already registered?
+    <a href="login.html" style="color:#0d47a1;text-decoration:none;">
+      Login here
+    </a>
+  </p>
+
 </div>
-
-<div style="display:flex;justify-content:center;align-items:center;height:85vh;">
-  <div style="background:white;padding:30px;width:350px;border-radius:8px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);">
-
-    <h2 style="text-align:center;color:#0d47a1;">Register</h2>
-
-    <input id="name" placeholder="Full Name"
-      style="width:100%;padding:10px;margin:8px 0;">
-
-    <input id="email" type="email" placeholder="Email"
-      style="width:100%;padding:10px;margin:8px 0;">
-
-    <input id="password" type="password" placeholder="Password"
-      style="width:100%;padding:10px;margin:8px 0;">
-
-    <button onclick="registerUser()"
-      style="width:100%;padding:10px;background:#0d47a1;color:white;border:none;">
-      Register
-    </button>
-
-    <hr style="margin:20px 0;">
-
-    <button onclick="googleRegister()"
-      style="width:100%;padding:10px;background:#db4437;color:white;border:none;">
-      Register with Google
-    </button>
-
-    <p style="text-align:center;margin-top:15px;">
-      Already registered?
-      <a href="login.html">Login</a>
-    </p>
-
-  </div>
-</div>
-
-<script type="module" src="../js/config.js"></script>
 
 <script type="module">
+import { auth, db } from "../src/config.js";
 import {
-  createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-
 import {
-  doc, setDoc
+  doc,
+  getDoc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-/* EMAIL REGISTER */
-window.registerUser = async function () {
-  const name = name.value;
-  const emailVal = email.value;
-  const pass = password.value;
+const provider = new GoogleAuthProvider();
 
-  const userCred = await createUserWithEmailAndPassword(auth, emailVal, pass);
+document.getElementById("googleRegister").onclick = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
 
-  await setDoc(doc(db, "users", userCred.user.uid), {
-    name: name,
-    email: emailVal,
-    role: "student"
-  });
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
 
-  window.location.href = "../dashboard/student.html";
-};
+    if (snap.exists()) {
+      alert("You are already registered. Redirecting to login.");
+      window.location.href = "login.html";
+      return;
+    }
 
-/* GOOGLE REGISTER */
-window.googleRegister = async function () {
-  const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
+    // Create new student
+    await setDoc(userRef, {
+      name: user.displayName,
+      email: user.email,
+      role: "student",
+      createdAt: new Date()
+    });
 
-  await setDoc(doc(db, "users", result.user.uid), {
-    name: result.user.displayName,
-    email: result.user.email,
-    role: "student"
-  });
+    alert("Registration successful!");
+    window.location.href = "../dashboard/student.html";
 
-  window.location.href = "../dashboard/student.html";
+  } catch (error) {
+    alert(error.message);
+  }
 };
 </script>
 

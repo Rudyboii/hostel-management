@@ -1,215 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Student Dashboard | Smart Hostel</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Dashboard | Smart Hostel</title>
+  </head>
 
-<body style="
-  margin:0;
-  font-family:'Segoe UI', Arial, sans-serif;
-  background:linear-gradient(180deg,#eef3f9,#ffffff);
-  color:#222;
-">
-
-<!-- ================= HEADER ================= -->
-<div style="
-  backdrop-filter:blur(10px);
-  background:rgba(13,71,161,0.9);
-  color:white;
-  padding:16px 40px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:sticky;
-  top:0;
-  z-index:10;
-">
-  <h3 style="margin:0;font-weight:600;">Smart Hostel</h3>
-
-  <button id="logoutBtn" style="
-    background:rgba(255,255,255,0.15);
-    color:white;
-    border:1px solid rgba(255,255,255,0.3);
-    padding:8px 16px;
-    border-radius:20px;
-    cursor:pointer;
-  ">
-    Logout
-  </button>
-</div>
-
-<!-- ================= HERO ================= -->
-<div style="
-  padding:70px 20px 30px;
-  display:flex;
-  justify-content:center;
-">
-  <div style="
-    max-width:900px;
-    width:100%;
-    background:linear-gradient(135deg,#1976d2,#42a5f5);
-    color:white;
-    border-radius:24px;
-    padding:50px 40px;
-    box-shadow:0 25px 60px rgba(0,0,0,0.15);
-  ">
-    <h1 style="margin:0;font-size:42px;font-weight:600;">
-      Welcome back 👋
-    </h1>
-
-    <p style="
-      margin-top:14px;
-      font-size:18px;
-      opacity:0.95;
-      line-height:1.5;
-    ">
-      All your hostel needs, in one place.<br>
-      Stay updated and take care of hostel stuff easily.
-    </p>
-  </div>
-</div>
-
-<!-- ================= NOTICE SECTION ================= -->
-<div style="
-  max-width:900px;
-  margin:0 auto 40px;
-  padding:0 20px;
-">
-  <div style="
-    background:#fff7e6;
-    border-left:6px solid #ffa726;
-    padding:18px 22px;
-    border-radius:12px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
-  ">
-    <h3 style="margin:0 0 6px;">📢 Latest Notice</h3>
-    <p style="margin:0;color:#555;">
-      Hostel maintenance work is scheduled this weekend. Please cooperate with the staff.
-    </p>
-  </div>
-</div>
-
-<!-- ================= ACTION SECTION ================= -->
-<div style="
-  max-width:900px;
-  margin:20px auto 60px;
-  padding:0 20px;
-">
-  <h2 style="
-    text-align:center;
-    font-weight:600;
-    margin-bottom:35px;
-  ">
-    What would you like to do?
-  </h2>
-
-  <div style="
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:28px;
-  ">
-
-    <!-- ROOM DETAILS -->
-    <div style="
-      background:white;
-      padding:32px;
-      border-radius:18px;
-      box-shadow:0 12px 30px rgba(0,0,0,0.08);
-      transition:all 0.25s ease;
-      cursor:pointer;
+  <body
+    style="
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(180deg, #eef3f9, #ffffff);
+      color: #222;
     "
-    onmouseover="this.style.transform='translateY(-6px)'"
-    onmouseout="this.style.transform='translateY(0)'">
-      <div style="font-size:36px;">🏠</div>
-      <h3 style="margin:12px 0 6px;">Room Details</h3>
-      <p style="color:#555;">
-        Check your room and accommodation info
-      </p>
+  >
+    <!-- ================= HEADER ================= -->
+    <div
+      style="
+        backdrop-filter: blur(10px);
+        background: rgba(13, 71, 161, 0.9);
+        color: white;
+        padding: 16px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      "
+    >
+      <h3 style="margin: 0; font-weight: 600">Smart Hostel</h3>
+
+      <button
+        id="logoutBtn"
+        style="
+          background: rgba(255, 255, 255, 0.15);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          padding: 8px 16px;
+          border-radius: 20px;
+          cursor: pointer;
+        "
+      >
+        Logout
+      </button>
     </div>
 
-    <!-- COMPLAINTS -->
-    <div style="
-      background:white;
-      padding:32px;
-      border-radius:18px;
-      box-shadow:0 12px 30px rgba(0,0,0,0.08);
-      transition:all 0.25s ease;
-      cursor:pointer;
-    "
-    onmouseover="this.style.transform='translateY(-6px)'"
-    onmouseout="this.style.transform='translateY(0)'">
-      <div style="font-size:36px;">🛠</div>
-      <h3 style="margin:12px 0 6px;">Complaints</h3>
-      <p style="color:#555;">
-        Report hostel issues or problems
-      </p>
+    <!-- ================= HERO ================= -->
+    <div
+      style="padding: 70px 20px 30px; display: flex; justify-content: center"
+    >
+      <div
+        style="
+          max-width: 900px;
+          width: 100%;
+          background: linear-gradient(135deg, #1976d2, #42a5f5);
+          color: white;
+          border-radius: 24px;
+          padding: 50px 40px;
+          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        "
+      >
+        <h1 style="margin: 0; font-size: 42px; font-weight: 600">
+          Welcome back 👋
+        </h1>
+
+        <p
+          style="
+            margin-top: 14px;
+            font-size: 18px;
+            opacity: 0.95;
+            line-height: 1.5;
+          "
+        >
+          All your hostel needs, in one place.<br />
+          Stay updated and take care of hostel stuff easily.
+        </p>
+      </div>
     </div>
 
-    <!-- APPLY -->
-    <div style="
-      background:white;
-      padding:32px;
-      border-radius:18px;
-      box-shadow:0 12px 30px rgba(0,0,0,0.08);
-      transition:all 0.25s ease;
-      cursor:pointer;
-    "
-    onmouseover="this.style.transform='translateY(-6px)'"
-    onmouseout="this.style.transform='translateY(0)'">
-      <div style="font-size:36px;">📝</div>
-      <h3 style="margin:12px 0 6px;">Apply</h3>
-      <p style="color:#555;">
-        Submit hostel-related requests
-      </p>
+    <!-- ================= NOTICE SECTION ================= -->
+    <div style="max-width: 900px; margin: 0 auto 40px; padding: 0 20px">
+      <div
+        style="
+          background: #fff7e6;
+          border-left: 6px solid #ffa726;
+          padding: 18px 22px;
+          border-radius: 12px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        "
+      >
+        <h3 style="margin: 0 0 6px">📢 Latest Notice</h3>
+        <p style="margin: 0; color: #555">
+          Hostel maintenance work is scheduled this weekend. Please cooperate
+          with the staff.
+        </p>
+      </div>
     </div>
 
-    <!-- LEAVE REQUEST -->
-    <div style="
-      background:white;
-      padding:32px;
-      border-radius:18px;
-      box-shadow:0 12px 30px rgba(0,0,0,0.08);
-      transition:all 0.25s ease;
-      cursor:pointer;
-    "
-    onmouseover="this.style.transform='translateY(-6px)'"
-    onmouseout="this.style.transform='translateY(0)'">
-      <div style="font-size:36px;">🚪</div>
-      <h3 style="margin:12px 0 6px;">Leave Request</h3>
-      <p style="color:#555;">
-        Apply for hostel leave or outpass
-      </p>
+    <!-- ================= ACTION SECTION ================= -->
+    <div style="max-width: 900px; margin: 20px auto 60px; padding: 0 20px">
+      <h2 style="text-align: center; font-weight: 600; margin-bottom: 35px">
+        What would you like to do?
+      </h2>
+
+      <div
+        style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px"
+      >
+        <!-- ROOM DETAILS -->
+        <div
+          onclick="location.href='../modules/room.html'"
+          style="
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            z-index: 5;
+            pointer-events: auto;
+          "
+          onmouseover="this.style.transform='translateY(-6px)'"
+          onmouseout="this.style.transform='translateY(0)'"
+        >
+          <div style="font-size: 34px; pointer-events: none">🏠</div>
+          <h3 style="pointer-events: none">Room Details</h3>
+          <p style="pointer-events: none">
+            Check your room and accommodation info
+          </p>
+        </div>
+
+        <!-- COMPLAINTS -->
+        <div
+          onclick="location.href='../modules/complaint-student.html'"
+          style="
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            z-index: 5;
+            pointer-events: auto;
+          "
+          onmouseover="this.style.transform='translateY(-6px)'"
+          onmouseout="this.style.transform='translateY(0)'"
+        >
+          <div style="font-size: 34px; pointer-events: none">🛠</div>
+          <h3 style="pointer-events: none">Complaints</h3>
+          <p style="pointer-events: none">Report hostel issues or problems</p>
+        </div>
+
+        <!-- APPLY -->
+        <div
+          onclick="location.href='../modules/apply-student.html'"
+          style="
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            z-index: 5;
+            pointer-events: auto;
+          "
+          onmouseover="this.style.transform='translateY(-6px)'"
+          onmouseout="this.style.transform='translateY(0)'"
+        >
+          <div style="font-size: 34px; pointer-events: none">📝</div>
+          <h3 style="pointer-events: none">Apply</h3>
+          <p style="pointer-events: none">Submit hostel-related requests</p>
+        </div>
+
+        <!-- LEAVE REQUEST -->
+        <div
+          onclick="location.href='../modules/leave-student.html'"
+          style="
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            z-index: 5;
+            pointer-events: auto;
+          "
+          onmouseover="this.style.transform='translateY(-6px)'"
+          onmouseout="this.style.transform='translateY(0)'"
+        >
+          <div style="font-size: 34px; pointer-events: none">🚪</div>
+          <h3 style="pointer-events: none">Leave Request</h3>
+          <p style="pointer-events: none">Apply for hostel leave or outpass</p>
+        </div>
+      </div>
     </div>
 
-  </div>
-</div>
+    <!-- ================= FOOTER ================= -->
+    <div
+      style="
+        background: #0d47a1;
+        color: white;
+        text-align: center;
+        padding: 22px;
+      "
+    >
+      <div style="font-weight: 600">Smart Hostel Management System</div>
+      <div style="font-size: 14px; opacity: 0.9">
+        Community Project | Second Year
+      </div>
+    </div>
 
-<!-- ================= FOOTER ================= -->
-<div style="
-  background:#0d47a1;
-  color:white;
-  text-align:center;
-  padding:22px;
-">
-  <div style="font-weight:600;">
-    Smart Hostel Management System
-  </div>
-  <div style="font-size:14px;opacity:0.9;">
-    Community Project | Second Year
-  </div>
-</div>
+    <!-- ================= LOGOUT ================= -->
+    <script type="module">
+      import { auth } from "../src/config.js";
+      import { signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-<!-- ================= LOGOUT ================= -->
-<script type="module">
-import { auth } from "../src/config.js";
-import { signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-
-document.getElementById("logoutBtn").addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "../index.html";
-});
-</script>
-
-</body>
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          await signOut(auth);
+          window.location.href = "../index.html";
+        });
+    </script>
+  </body>
 </html>
