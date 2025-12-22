@@ -1,121 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Hostel Notices | Smart Hostel</title>
+  <title>Hostel Notices</title>
 </head>
 
-<body style="
-  margin:0;
-  font-family:'Segoe UI', Arial, sans-serif;
-  background:#eef3f9;
-  color:#222;
-">
+<body style="margin:0;font-family:Segoe UI,Arial;background:#eef3f9;">
 
-<!-- ================= HEADER ================= -->
-<div style="
-  background:#0d47a1;
-  color:white;
-  padding:16px 30px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-">
+<!-- HEADER -->
+<div style="background:#0d47a1;color:white;padding:16px 30px;display:flex;justify-content:space-between;">
   <h3 style="margin:0;">Hostel Notices</h3>
-  <a href="javascript:history.back()" style="
-    color:white;
-    text-decoration:none;
-    font-size:14px;
-  ">
-    ← Back
-  </a>
+  <a href="javascript:history.back()" style="color:white;text-decoration:none;">← Back</a>
 </div>
 
-<!-- ================= HERO ================= -->
-<div style="
-  max-width:1000px;
-  margin:40px auto 20px;
-  padding:0 20px;
-">
-  <div style="
-    background:linear-gradient(135deg,#1976d2,#42a5f5);
-    color:white;
-    padding:32px;
-    border-radius:20px;
-    box-shadow:0 18px 40px rgba(0,0,0,0.15);
-  ">
-    <h1 style="margin:0;">Important Notices</h1>
-    <p style="margin-top:10px;opacity:0.95;">
-      Stay updated with the latest hostel announcements
-    </p>
-  </div>
+<!-- NOTICE LIST -->
+<div style="max-width:900px;margin:40px auto;padding:0 20px;" id="noticeList">
+  Loading notices...
 </div>
 
-<!-- ================= NOTICE LIST ================= -->
-<div style="
-  max-width:1000px;
-  margin:30px auto 60px;
-  padding:0 20px;
-">
+<!-- FIREBASE -->
+<script type="module">
+import { db } from "../src/config.js";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-  <!-- NOTICE CARD -->
-  <div style="
+const container = document.getElementById("noticeList");
+container.innerHTML = "";
+
+const q = query(
+  collection(db, "notices"),
+  orderBy("createdAt", "desc")
+);
+
+const snapshot = await getDocs(q);
+
+if (snapshot.empty) {
+  container.innerHTML = "<p>No notices available</p>";
+}
+
+snapshot.forEach(doc => {
+  const n = doc.data();
+
+  const card = document.createElement("div");
+  card.style = `
     background:white;
-    padding:28px;
-    margin-bottom:25px;
-    border-radius:18px;
-    box-shadow:0 12px 30px rgba(0,0,0,0.08);
-  ">
-    <h3 style="margin:0;">📢 Water Supply Maintenance</h3>
-    <p style="margin:12px 0;color:#555;">
-      Water supply will be temporarily unavailable on Sunday due to scheduled maintenance work.
-      Students are requested to store water in advance.
-    </p>
-    <small style="color:#888;">Posted on: 12 Oct 2025</small>
-  </div>
+    padding:25px;
+    margin-bottom:20px;
+    border-radius:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,.1);
+  `;
 
-  <!-- NOTICE CARD -->
-  <div style="
-    background:white;
-    padding:28px;
-    margin-bottom:25px;
-    border-radius:18px;
-    box-shadow:0 12px 30px rgba(0,0,0,0.08);
-  ">
-    <h3 style="margin:0;">📢 Hostel Entry Timings</h3>
-    <p style="margin:12px 0;color:#555;">
-      All students must return to the hostel before 10:00 PM. Late entry will require permission
-      from the hostel authority.
-    </p>
-    <small style="color:#888;">Posted on: 5 Oct 2025</small>
-  </div>
+  card.innerHTML = `
+    <h3>${n.title}</h3>
+    <p style="color:#555;">${n.message}</p>
+    <small style="color:#888;">Posted recently</small>
+  `;
 
-  <!-- NOTICE CARD -->
-  <div style="
-    background:white;
-    padding:28px;
-    border-radius:18px;
-    box-shadow:0 12px 30px rgba(0,0,0,0.08);
-  ">
-    <h3 style="margin:0;">📢 Room Inspection</h3>
-    <p style="margin:12px 0;color:#555;">
-      Room inspection will be conducted this Friday. Students are advised to keep their rooms clean.
-    </p>
-    <small style="color:#888;">Posted on: 1 Oct 2025</small>
-  </div>
-
-</div>
-
-<!-- ================= FOOTER ================= -->
-<div style="
-  background:#0d47a1;
-  color:white;
-  text-align:center;
-  padding:15px;
-  font-size:14px;
-">
-  Smart Hostel Management System
-</div>
+  container.appendChild(card);
+});
+</script>
 
 </body>
 </html>

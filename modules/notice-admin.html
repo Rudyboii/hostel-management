@@ -1,169 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Notice Management | Smart Hostel</title>
+  <title>Notice Admin</title>
 </head>
 
-<body style="
-  margin:0;
-  font-family:'Segoe UI', Arial, sans-serif;
-  background:#eef3f9;
-  color:#222;
-">
+<body style="margin:0;font-family:Segoe UI,Arial;background:#eef3f9;">
 
-<!-- ================= HEADER ================= -->
-<div style="
-  background:#0d47a1;
-  color:white;
-  padding:16px 30px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-">
+<!-- HEADER -->
+<div style="background:#0d47a1;color:white;padding:16px 30px;display:flex;justify-content:space-between;">
   <h3 style="margin:0;">Notice Management</h3>
-  <a href="javascript:history.back()" style="
-    color:white;
-    text-decoration:none;
-    font-size:14px;
-  ">
-    ← Back
-  </a>
+  <a href="javascript:history.back()" style="color:white;text-decoration:none;">← Back</a>
 </div>
 
-<!-- ================= HERO ================= -->
-<div style="
-  max-width:1000px;
-  margin:40px auto 20px;
-  padding:0 20px;
-">
-  <div style="
-    background:linear-gradient(135deg,#1976d2,#42a5f5);
-    color:white;
-    padding:32px;
-    border-radius:20px;
-    box-shadow:0 18px 40px rgba(0,0,0,0.15);
-  ">
-    <h1 style="margin:0;">Publish Hostel Notice</h1>
-    <p style="margin-top:10px;opacity:0.95;">
-      Create and manage notices for hostel students
-    </p>
-  </div>
-</div>
+<!-- FORM -->
+<div style="max-width:900px;margin:40px auto;padding:0 20px;">
+  <div style="background:white;padding:30px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,.1);">
 
-<!-- ================= NOTICE FORM ================= -->
-<div style="
-  max-width:1000px;
-  margin:30px auto 60px;
-  padding:0 20px;
-">
+    <h2>Create Notice</h2>
 
-  <div style="
-    background:white;
-    padding:36px;
-    border-radius:18px;
-    box-shadow:0 12px 30px rgba(0,0,0,0.08);
-    margin-bottom:40px;
-  ">
-
-    <h2 style="margin-top:0;">New Notice</h2>
-
-    <!-- NOTICE TITLE -->
-    <label style="font-weight:600;">Notice Title</label>
-    <input
-      type="text"
+    <label><b>Title</b></label>
+    <input id="title" type="text" required
       placeholder="Enter notice title"
-      style="
-        width:100%;
-        padding:12px;
-        margin:10px 0 22px;
-        border-radius:8px;
-        border:1px solid #ccc;
-        font-size:14px;
-      "
-    >
+      style="width:100%;padding:12px;margin:10px 0 20px;">
 
-    <!-- NOTICE MESSAGE -->
-    <label style="font-weight:600;">Notice Description</label>
-    <textarea
+    <label><b>Message</b></label>
+    <textarea id="message" required
       placeholder="Enter notice details"
-      style="
-        width:100%;
-        height:140px;
-        padding:12px;
-        margin:10px 0 30px;
-        border-radius:8px;
-        border:1px solid #ccc;
-        font-size:14px;
-        resize:none;
-      "
-    ></textarea>
+      style="width:100%;height:120px;padding:12px;margin:10px 0 30px;"></textarea>
 
-    <!-- PUBLISH BUTTON -->
-    <button style="
-      background:#0d47a1;
-      color:white;
-      border:none;
-      padding:14px 34px;
-      border-radius:10px;
-      font-size:15px;
-      cursor:pointer;
-      transition:background 0.2s ease;
-    "
-    onmouseover="this.style.background='#08306b'"
-    onmouseout="this.style.background='#0d47a1'"
-    >
+    <button id="publishBtn"
+      style="background:#0d47a1;color:white;padding:14px 30px;border:none;border-radius:8px;cursor:pointer;">
       Publish Notice
     </button>
 
   </div>
+</div>
+<!-- PUBLISHED NOTICES -->
+<div style="
+  background:white;
+  padding:30px;
+  border-radius:16px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+  margin-top:40px;
+">
 
-  <!-- ================= EXISTING NOTICES ================= -->
-  <div style="
-    background:white;
-    padding:36px;
-    border-radius:18px;
-    box-shadow:0 12px 30px rgba(0,0,0,0.08);
-  ">
-    <h2 style="margin-top:0;">Recent Notices</h2>
+  <h2>Published Notices</h2>
 
-    <!-- NOTICE ITEM -->
-    <div style="
-      padding:18px 0;
-      border-bottom:1px solid #eee;
-    ">
-      <h4 style="margin:0;">Water Supply Maintenance</h4>
-      <p style="margin:8px 0;color:#555;">
-        Water supply will be temporarily unavailable on Sunday due to maintenance work.
-      </p>
-      <small style="color:#888;">Posted on: 12 Oct 2025</small>
-    </div>
-
-    <!-- NOTICE ITEM -->
-    <div style="
-      padding:18px 0;
-    ">
-      <h4 style="margin:0;">Hostel Entry Timings</h4>
-      <p style="margin:8px 0;color:#555;">
-        All students must return to the hostel before 10:00 PM.
-      </p>
-      <small style="color:#888;">Posted on: 5 Oct 2025</small>
-    </div>
-
+  <div id="adminNoticeList">
+    Loading notices...
   </div>
 
 </div>
 
-<!-- ================= FOOTER ================= -->
-<div style="
-  background:#0d47a1;
-  color:white;
-  text-align:center;
-  padding:15px;
-  font-size:14px;
-">
-  Smart Hostel Management System
-</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { db } from "../src/config.js";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  Timestamp
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const titleInput = document.getElementById("title");
+const messageInput = document.getElementById("message");
+const publishBtn = document.getElementById("publishBtn");
+const noticeList = document.getElementById("adminNoticeList");
+
+// ================= PUBLISH NOTICE =================
+publishBtn.onclick = async () => {
+  const title = titleInput.value.trim();
+  const message = messageInput.value.trim();
+
+  if (!title || !message) {
+    alert("All fields are required");
+    return;
+  }
+
+  await addDoc(collection(db, "notices"), {
+    title,
+    message,
+    createdAt: Timestamp.now()
+  });
+
+  titleInput.value = "";
+  messageInput.value = "";
+
+  loadNotices(); // refresh list
+};
+
+// ================= LOAD NOTICES =================
+async function loadNotices() {
+  noticeList.innerHTML = "";
+
+  const q = query(
+    collection(db, "notices"),
+    orderBy("createdAt", "desc")
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    noticeList.innerHTML = "<p>No notices published yet.</p>";
+    return;
+  }
+
+  snapshot.forEach(doc => {
+    const n = doc.data();
+
+    const card = document.createElement("div");
+    card.style = `
+      padding:18px 0;
+      border-bottom:1px solid #eee;
+    `;
+
+    card.innerHTML = `
+      <h4 style="margin:0;">${n.title}</h4>
+      <p style="margin:8px 0;color:#555;">${n.message}</p>
+      <small style="color:#888;">Posted recently</small>
+    `;
+
+    noticeList.appendChild(card);
+  });
+}
+
+// Load notices on page load
+loadNotices();
+</script>
 
 </body>
 </html>

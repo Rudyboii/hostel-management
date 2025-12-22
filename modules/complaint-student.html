@@ -69,7 +69,7 @@
 
     <!-- COMPLAINT TYPE -->
     <label style="font-weight:600;">Complaint Type</label>
-    <select style="
+    <select required style="
       width:100%;
       padding:12px;
       margin:10px 0 22px;
@@ -91,6 +91,7 @@
     <input
       type="text"
       placeholder="e.g. Room 203"
+      required
       style="
         width:100%;
         padding:12px;
@@ -105,6 +106,7 @@
     <label style="font-weight:600;">Description</label>
     <textarea
       placeholder="Describe the issue clearly"
+      required
       style="
         width:100%;
         height:120px;
@@ -147,6 +149,34 @@
 ">
   Smart Hostel Management System
 </div>
+<script type="module">
+import { auth, db } from "../src/config.js";
+import {
+  collection,
+  addDoc,
+  Timestamp
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+document.querySelector("button").onclick = async () => {
+  const type = document.querySelector("select").value;
+  const room = document.querySelector("input").value;
+  const desc = document.querySelector("textarea").value;
+
+  const user = auth.currentUser;
+  if (!user) return alert("Not logged in");
+
+  await addDoc(collection(db, "complaints"), {
+    type,
+    room,
+    description: desc,
+    status: "pending",
+    studentEmail: user.email,
+    createdAt: Timestamp.now()
+  });
+
+  alert("Complaint submitted");
+};
+</script>
 
 </body>
 </html>
