@@ -2,71 +2,161 @@
 <html>
 <head>
   <title>Complaint Management</title>
+  <link rel="stylesheet" href="../src/global.css">
 </head>
 
-<body style="margin:0;font-family:Segoe UI,Arial;background:#eef3f9;">
+<body>
 
-<!-- HEADER -->
-<div style="background:#0d47a1;color:white;padding:16px 30px;display:flex;justify-content:space-between;">
-  <h3 style="margin:0;">Complaint Management</h3>
-  <a href="javascript:history.back()" style="color:white;text-decoration:none;">← Back</a>
+<!-- ================= HEADER ================= -->
+<div class="header">
+  <h3>Complaint Management</h3>
+  <a href="javascript:history.back()" 
+     style="color:white;text-decoration:none;font-weight:500;">
+    ← Back
+  </a>
 </div>
 
-<!-- LIST -->
-<div style="max-width:1000px;margin:40px auto;padding:0 20px;" id="list">
-  Loading complaints...
+<!-- ================= HERO ================= -->
+<div class="hero">
+  <div class="hero-box">
+    <h1 style="margin:0;font-size:38px;">Student Complaints 🛠</h1>
+    <p style="margin-top:18px;font-size:17px;opacity:0.95;">
+      Monitor, review and resolve complaints in real time.
+    </p>
+  </div>
 </div>
 
-<!-- FIREBASE LOGIC -->
+<!-- ================= LIST SECTION ================= -->
+<div style="max-width:1100px;margin:0 auto 80px;padding:0 20px;">
+
+  <div class="card" style="cursor:default;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h3 style="margin:0;">All Complaints</h3>
+      <span class="badge badge-pending">Live Updates</span>
+    </div>
+
+    <div id="list">
+      Loading complaints...
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ================= FOOTER ================= -->
+<div class="footer">
+  <div style="font-weight:600;">Smart Hostel Management System</div>
+  <div style="font-size:14px;opacity:0.9;margin-top:6px;">
+    Admin Module | Complaint Section
+  </div>
+</div>
+
+<!-- ================= FIREBASE LOGIC ================= -->
 <script type="module">
 import { db } from "../src/config.js";
 import {
   collection,
-  getDocs,
+  onSnapshot,
   doc,
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const list = document.getElementById("list");
-list.innerHTML = "";
 
-const snapshot = await getDocs(collection(db, "complaints"));
+onSnapshot(collection(db, "complaints"), (snapshot) => {
+  list.innerHTML = "";
 
-snapshot.forEach(d => {
-  const c = d.data();
-
-  const card = document.createElement("div");
-  card.style = `
-    background:white;
-    padding:25px;
-    border-radius:16px;
-    margin-bottom:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,.1);
-  `;
-
-  card.innerHTML = `
-    <h3>${c.type}</h3>
-    <p><b>Room:</b> ${c.room}</p>
-    <p><b>Student:</b> ${c.studentEmail}</p>
-    <p style="color:#555;">${c.description}</p>
-    <p><b>Status:</b> ${c.status}</p>
-    ${c.status === "pending" ? `<button style="background:#0d47a1;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;">
-      Mark as Resolved
-    </button>` : ""}
-  `;
-
-  if (c.status === "pending") {
-    card.querySelector("button").onclick = async () => {
-      await updateDoc(doc(db, "complaints", d.id), {
-        status: "resolved"
-      });
-      location.reload();
-    };
+  if (snapshot.empty) {
+    list.innerHTML = "<p style='opacity:.7;'>No complaints found.</p>";
+    return;
   }
 
-  list.appendChild(card);
+  snapshot.forEach(d => {
+    const c = d.data();
+
+    const card = document.createElement("div");
+    card.style = `
+      background:white;
+      padding:30px;
+      border-radius:20px;
+      margin-bottom:25px;
+      box-shadow:0 15px 40px rgba(0,0,0,.08);
+      transition:0.3s ease;
+    `;
+
+    card.onmouseover = () => {
+      card.style.transform = "translateY(-5px)";
+      card.style.boxShadow = "0 20px 50px rgba(0,0,0,.12)";
+    };
+
+    card.onmouseout = () => {
+      card.style.transform = "translateY(0)";
+      card.style.boxShadow = "0 15px 40px rgba(0,0,0,.08)";
+    };
+
+    let badgeClass = "badge badge-pending";
+    if (c.status === "resolved") badgeClass = "badge badge-approved";
+
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="margin:0;">${c.type}</h3>
+        <span class="${badgeClass}">
+          ${c.status.toUpperCase()}
+        </span>
+      </div>
+
+      <p style="margin-top:10px;"><b>Room:</b> ${c.room}</p>
+      <p><b>Student:</b> ${c.studentEmail}</p>
+
+      <p style="margin:15px 0;color:#555;">
+        ${c.description}
+      </p>
+
+      ${
+        c.status === "pending"
+          ? `<button class="btn-primary" data-id="${d.id}">
+              Mark as Resolved
+            </button>`
+          : ""
+      }
+    `;
+
+    if (c.status === "pending") {
+      card.querySelector("button").onclick = async () => {
+        await updateDoc(doc(db, "complaints", d.id), {
+          status: "resolved"
+        });
+      };
+    }
+
+    list.appendChild(card);
+  });
+});
+</script>
+
+<script type="module">
+import { auth, db } from "../src/config.js";
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    window.location.href = "../auth/login.html";
+    return;
+  }
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists() || snap.data().role !== "admin") {
+    alert("Access denied");
+    window.location.href = "../dashboard/student.html";
+  }
 });
 </script>
 
 </body>
+
 </html>

@@ -1,0 +1,228 @@
+/* ================= GLOBAL RESET ================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #f7f9ff, #edf2ff);
+  color: #1f2937;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* === Animated Gradient Blobs === */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.45;
+  z-index: -1;
+  animation: float 18s ease-in-out infinite alternate;
+}
+
+/* Blue blob */
+body::before {
+  background: radial-gradient(circle, #1976d2, #42a5f5);
+  top: -200px;
+  left: -200px;
+}
+
+/* Lighter blue blob */
+body::after {
+  background: radial-gradient(circle, #90caf9, #64b5f6);
+  bottom: -200px;
+  right: -200px;
+}
+
+/* Smooth floating animation */
+@keyframes float {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  100% {
+    transform: translate(60px, 40px) scale(1.1);
+  }
+}
+
+/* Floating blurred circles */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.4;
+  z-index: -1;
+}
+
+body::before {
+  background: #1976d2;
+  top: -150px;
+  left: -150px;
+}
+
+body::after {
+  background: #42a5f5;
+  bottom: -150px;
+  right: -150px;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+body::before,
+body::after {
+  pointer-events: none;  /* prevents overlap interaction */
+  z-index: -1;
+}
+
+/* ================= HEADER ================= */
+.header {
+  backdrop-filter: blur(10px);
+  background: rgba(13, 71, 161, 0.95);
+  color: white;
+  padding: 18px 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;   /* increase z-index */
+}
+
+
+/* ================= HERO ================= */
+.hero {
+  padding: 120px 20px 40px;  /* increased top padding */
+  display: flex;
+  justify-content: center;
+}
+
+
+.hero-box {
+  max-width: 1000px;
+  width: 100%;
+  background: linear-gradient(135deg, #0d47a1, #1565c0, #1e88e5);
+  color: white;
+  border-radius: 28px;
+  padding: 70px 60px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.18);
+}
+
+/* ================= GRID ================= */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 35px;
+}
+
+/* ================= CARD ================= */
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 25px 70px rgba(0,0,0,0.12);
+}
+
+/* subtle gradient highlight effect */
+.card::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at top left, rgba(13,71,161,0.05), transparent);
+  top: -100%;
+  left: -100%;
+  transition: 0.4s ease;
+}
+
+.card:hover::before {
+  top: -20%;
+  left: -20%;
+}
+
+/* ================= BUTTONS ================= */
+.btn-primary {
+  background: linear-gradient(135deg, #0d47a1, #1976d2);
+  color: white;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(13,71,161,0.3);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #c62828, #e53935);
+  color: white;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(198,40,40,0.3);
+}
+
+/* ================= BADGES ================= */
+.badge {
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge-pending {
+  background: #fff4e5;
+  color: #b26a00;
+}
+
+.badge-approved {
+  background: #e6f7ec;
+  color: #0f7a3d;
+}
+
+.badge-rejected {
+  background: #fdecea;
+  color: #c62828;
+}
+
+/* ================= FOOTER ================= */
+.footer {
+  background: #0d47a1;
+  color: white;
+  text-align: center;
+  padding: 30px;
+  margin-top: 60px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+}

@@ -30,6 +30,17 @@
     ← Back
   </a>
 </div>
+<div id="notification"
+  style="
+    display:none;
+    padding:14px 20px;
+    margin:20px auto;
+    max-width:900px;
+    border-radius:10px;
+    font-size:14px;
+  ">
+</div>
+
 
 <!-- ================= HERO ================= -->
 <div style="
@@ -69,7 +80,7 @@
 
     <!-- COMPLAINT TYPE -->
     <label style="font-weight:600;">Complaint Type</label>
-    <select required style="
+    <select  id="type" required style="
       width:100%;
       padding:12px;
       margin:10px 0 22px;
@@ -88,7 +99,7 @@
 
     <!-- LOCATION -->
     <label style="font-weight:600;">Location / Room Number</label>
-    <input
+    <input id="room"
       type="text"
       placeholder="e.g. Room 203"
       required
@@ -104,7 +115,7 @@
 
     <!-- DESCRIPTION -->
     <label style="font-weight:600;">Description</label>
-    <textarea
+    <textarea id="desc"
       placeholder="Describe the issue clearly"
       required
       style="
@@ -120,24 +131,33 @@
     ></textarea>
 
     <!-- SUBMIT BUTTON -->
-    <button style="
-      background:#0d47a1;
-      color:white;
-      border:none;
-      padding:14px 34px;
-      border-radius:10px;
-      font-size:15px;
-      cursor:pointer;
-      transition:background 0.2s ease;
-    "
-    onmouseover="this.style.background='#08306b'"
-    onmouseout="this.style.background='#0d47a1'"
-    >
-      Submit Complaint
-    </button>
+    <button 
+  id="submitBtn"
+  style="
+    background:#0d47a1;
+    color:white;
+    border:none;
+    padding:14px 34px;
+    border-radius:10px;
+    font-size:15px;
+    cursor:pointer;
+    transition:background 0.2s ease;
+  "
+  onmouseover="this.style.background='#08306b'"
+  onmouseout="this.style.background='#0d47a1'"
+>
+  Submit Complaint
+</button>
+
 
   </div>
 </div>
+<p style="margin-top:20px;">
+  <a href="../modules/my-complaints.html"
+     style="color:#0d47a1;text-decoration:none;">
+    View my complaints →
+  </a>
+</p>
 
 <!-- ================= FOOTER ================= -->
 <div style="
@@ -157,26 +177,45 @@ import {
   Timestamp
 } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-document.querySelector("button").onclick = async () => {
-  const type = document.querySelector("select").value;
-  const room = document.querySelector("input").value;
-  const desc = document.querySelector("textarea").value;
+const btn = document.getElementById("submitBtn");
+
+console.log("Button:", btn);
+
+btn.addEventListener("click", async () => {
+  console.log("Button clicked");
+
+  const type = document.getElementById("type").value.trim();
+  const room = document.getElementById("room").value.trim();
+  const desc = document.getElementById("desc").value.trim();
+
+  console.log(type, room, desc);
 
   const user = auth.currentUser;
-  if (!user) return alert("Not logged in");
+  console.log("User:", user);
+
+  if (!type || !room || !desc) {
+    alert("All fields required");
+    return;
+  }
+
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
 
   await addDoc(collection(db, "complaints"), {
     type,
     room,
     description: desc,
-    status: "pending",
     studentEmail: user.email,
+    status: "pending",
     createdAt: Timestamp.now()
   });
 
   alert("Complaint submitted");
-};
+});
 </script>
+
 
 </body>
 </html>

@@ -1,135 +1,298 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <title>Notice Admin</title>
-</head>
+  <head>
+    <title>Notice Admin</title>
+  </head>
 
-<body style="margin:0;font-family:Segoe UI,Arial;background:#eef3f9;">
+  <body
+    style="
+      margin: 0;
+      font-family:
+        Segoe UI,
+        Arial;
+      background: #eef3f9;
+    "
+  >
+    <!-- HEADER -->
+    <div
+      style="
+        background: #0d47a1;
+        color: white;
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+      "
+    >
+      <h3 style="margin: 0">Notice Management</h3>
+      <a
+        href="javascript:history.back()"
+        style="color: white; text-decoration: none"
+        >← Back</a
+      >
+    </div>
 
-<!-- HEADER -->
-<div style="background:#0d47a1;color:white;padding:16px 30px;display:flex;justify-content:space-between;">
-  <h3 style="margin:0;">Notice Management</h3>
-  <a href="javascript:history.back()" style="color:white;text-decoration:none;">← Back</a>
-</div>
+    <div
+      id="notification"
+      style="
+        display: none;
+        padding: 14px 20px;
+        margin: 20px auto;
+        max-width: 900px;
+        border-radius: 10px;
+        font-size: 14px;
+      "
+    ></div>
 
-<!-- FORM -->
-<div style="max-width:900px;margin:40px auto;padding:0 20px;">
-  <div style="background:white;padding:30px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,.1);">
+    <!-- FORM -->
+    <div style="max-width: 900px; margin: 40px auto; padding: 0 20px">
+      <div
+        style="
+          background: white;
+          padding: 30px;
+          border-radius: 16px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <h2>Create Notice</h2>
 
-    <h2>Create Notice</h2>
+        <label><b>Title</b></label>
+        <input
+          id="title"
+          type="text"
+          required
+          placeholder="Enter notice title"
+          style="width: 100%; padding: 12px; margin: 10px 0 20px"
+        />
 
-    <label><b>Title</b></label>
-    <input id="title" type="text" required
-      placeholder="Enter notice title"
-      style="width:100%;padding:12px;margin:10px 0 20px;">
+        <label><b>Message</b></label>
+        <textarea
+          id="message"
+          required
+          placeholder="Enter notice details"
+          style="width: 100%; height: 120px; padding: 12px; margin: 10px 0 30px"
+        ></textarea>
 
-    <label><b>Message</b></label>
-    <textarea id="message" required
-      placeholder="Enter notice details"
-      style="width:100%;height:120px;padding:12px;margin:10px 0 30px;"></textarea>
+        <button
+          id="publishBtn"
+          style="
+            background: #0d47a1;
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+          "
+        >
+          Publish Notice
+        </button>
+      </div>
+    </div>
+    <!-- PUBLISHED NOTICES -->
+    <div
+      style="
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        margin-top: 40px;
+      "
+    >
+      <h2>Published Notices</h2>
 
-    <button id="publishBtn"
-      style="background:#0d47a1;color:white;padding:14px 30px;border:none;border-radius:8px;cursor:pointer;">
-      Publish Notice
-    </button>
+      <div id="adminNoticeList">Loading notices...</div>
+    </div>
 
-  </div>
-</div>
-<!-- PUBLISHED NOTICES -->
-<div style="
-  background:white;
-  padding:30px;
-  border-radius:16px;
-  box-shadow:0 10px 25px rgba(0,0,0,.1);
-  margin-top:40px;
-">
+    <!-- FIREBASE -->
+    <script type="module">
+  import { auth, db } from "../src/config.js";
+  import {
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    orderBy,
+    Timestamp,
+    doc,
+    getDoc,
+  } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-  <h2>Published Notices</h2>
+  /* ================= GLOBAL USER ================= */
+  let currentUser = null;
 
-  <div id="adminNoticeList">
-    Loading notices...
-  </div>
+  /* ================= NOTIFICATION HELPER ================= */
+  function showNotification(message, type) {
+    const box = document.getElementById("notification");
+    if (!box) return;
 
-</div>
+    box.style.display = "block";
+    box.innerText = message;
 
+    if (type === "success") {
+      box.style.background = "#e8f5e9";
+      box.style.color = "#2e7d32";
+    } else {
+      box.style.background = "#ffebee";
+      box.style.color = "#c62828";
+    }
 
-<!-- FIREBASE -->
-<script type="module">
-import { db } from "../src/config.js";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  orderBy,
-  Timestamp
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-
-const titleInput = document.getElementById("title");
-const messageInput = document.getElementById("message");
-const publishBtn = document.getElementById("publishBtn");
-const noticeList = document.getElementById("adminNoticeList");
-
-// ================= PUBLISH NOTICE =================
-publishBtn.onclick = async () => {
-  const title = titleInput.value.trim();
-  const message = messageInput.value.trim();
-
-  if (!title || !message) {
-    alert("All fields are required");
-    return;
+    setTimeout(() => {
+      box.style.display = "none";
+    }, 3000);
   }
 
-  await addDoc(collection(db, "notices"), {
-    title,
-    message,
-    createdAt: Timestamp.now()
+  /* ================= AUTH + ROLE CHECK ================= */
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      window.location.href = "../auth/login.html";
+      return;
+    }
+
+    currentUser = user;
+
+    // 🔐 Admin notice page check
+    const noticeList = document.getElementById("adminNoticeList");
+    if (noticeList) {
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userRef);
+
+        if (!snap.exists() || snap.data().role !== "admin") {
+          alert("Access denied");
+          window.location.href = "../dashboard/student.html";
+          return;
+        }
+
+        loadNotices();
+      } catch (err) {
+        console.error("Auth check error:", err);
+      }
+    }
   });
 
-  titleInput.value = "";
-  messageInput.value = "";
+  /* ================= ADMIN : PUBLISH NOTICE ================= */
+  const publishBtn = document.getElementById("publishBtn");
+  const titleInput = document.getElementById("title");
+  const messageInput = document.getElementById("message");
+  const noticeList = document.getElementById("adminNoticeList");
 
-  loadNotices(); // refresh list
-};
+  if (publishBtn) {
+    publishBtn.addEventListener("click", async () => {
+      const title = titleInput.value.trim();
+      const message = messageInput.value.trim();
 
-// ================= LOAD NOTICES =================
-async function loadNotices() {
-  noticeList.innerHTML = "";
+      if (!title || !message) {
+        alert("All fields are required");
+        return;
+      }
 
-  const q = query(
-    collection(db, "notices"),
-    orderBy("createdAt", "desc")
-  );
+      try {
+        await addDoc(collection(db, "notices"), {
+          title,
+          message,
+          createdAt: Timestamp.now(),
+        });
 
-  const snapshot = await getDocs(q);
-
-  if (snapshot.empty) {
-    noticeList.innerHTML = "<p>No notices published yet.</p>";
-    return;
+        titleInput.value = "";
+        messageInput.value = "";
+        loadNotices();
+      } catch (err) {
+        console.error("Publish error:", err);
+        alert("Failed to publish notice");
+      }
+    });
   }
 
-  snapshot.forEach(doc => {
-    const n = doc.data();
+  /* ================= ADMIN : LOAD NOTICES ================= */
+  async function loadNotices() {
+    if (!noticeList) return;
 
-    const card = document.createElement("div");
-    card.style = `
-      padding:18px 0;
-      border-bottom:1px solid #eee;
-    `;
+    noticeList.innerHTML = "";
 
-    card.innerHTML = `
-      <h4 style="margin:0;">${n.title}</h4>
-      <p style="margin:8px 0;color:#555;">${n.message}</p>
-      <small style="color:#888;">Posted recently</small>
-    `;
+    try {
+      const q = query(
+        collection(db, "notices"),
+        orderBy("createdAt", "desc")
+      );
 
-    noticeList.appendChild(card);
-  });
-}
+      const snapshot = await getDocs(q);
 
-// Load notices on page load
-loadNotices();
+      if (snapshot.empty) {
+        noticeList.innerHTML = "<p>No notices published yet.</p>";
+        return;
+      }
+
+      snapshot.forEach((docSnap) => {
+        const n = docSnap.data();
+
+        const card = document.createElement("div");
+        card.style.cssText = `
+          padding:18px 0;
+          border-bottom:1px solid #eee;
+        `;
+
+        card.innerHTML = `
+          <h4 style="margin:0;">${n.title}</h4>
+          <p style="margin:8px 0;color:#555;">${n.message}</p>
+          <small style="color:#888;">Posted recently</small>
+        `;
+
+        noticeList.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Load notices error:", err);
+      noticeList.innerHTML = "<p>Error loading notices</p>";
+    }
+  }
+
+  /* ================= STUDENT : SUBMIT COMPLAINT ================= */
+  const submitBtn = document.getElementById("submitBtn");
+
+  if (submitBtn) {
+    submitBtn.addEventListener("click", async () => {
+      if (!currentUser) {
+        showNotification("Please login again", "error");
+        return;
+      }
+
+      const type = document.getElementById("type").value.trim();
+      const room = document.getElementById("room").value.trim();
+      const desc = document.getElementById("desc").value.trim();
+
+      if (!type || !room || !desc) {
+        showNotification("All fields are required", "error");
+        return;
+      }
+
+      submitBtn.innerText = "Submitting...";
+      submitBtn.disabled = true;
+
+      try {
+        await addDoc(collection(db, "complaints"), {
+          type,
+          room,
+          description: desc,
+          studentEmail: currentUser.email,
+          status: "pending",
+          createdAt: Timestamp.now(),
+        });
+
+        showNotification("Complaint submitted successfully", "success");
+
+        document.getElementById("type").value = "";
+        document.getElementById("room").value = "";
+        document.getElementById("desc").value = "";
+
+      } catch (err) {
+        console.error("Complaint error:", err);
+        showNotification("Failed to submit complaint", "error");
+      }
+
+      submitBtn.innerText = "Submit Complaint";
+      submitBtn.disabled = false;
+    });
+  }
 </script>
 
-</body>
+
+  </body>
 </html>

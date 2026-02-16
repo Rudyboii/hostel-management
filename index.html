@@ -1,283 +1,360 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <title>Smart Hostel Management System</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
+  <head>
+    <title>Smart Hostel Management System</title>
+    <style>
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        width: 700px;
+        height: 700px;
+        border-radius: 50%;
+        filter: blur(140px);
+        opacity: 0.35;
+        z-index: -1;
+        animation: float 20s ease-in-out infinite alternate;
+      }
+
+      body::before {
+        background: radial-gradient(circle, #1976d2, #42a5f5);
+        top: -200px;
+        left: -200px;
+      }
+
+      body::after {
+        background: radial-gradient(circle, #90caf9, #64b5f6);
+        bottom: -200px;
+        right: -200px;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(0, 0) scale(1);
+        }
+
+        100% {
+          transform: translate(60px, 40px) scale(1.1);
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    style="
       margin: 0;
-      font-family: 'Arial', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    a {
-      transition: all 0.3s ease;
-    }
-    .card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    @media (max-width: 768px) {
-      .navbar { padding: 15px 20px !important;
-        flex-direction: column !important;
-        text-align: center;
-      }
-      .hero {
-        padding: 60px 20px !important;
-      }
-      .hero-content {
-        flex-direction: column !important;
-        text-align: center;
-      }
-      .hero-left {
-        max-width: 100% !important;
-      }
-      .hero-right {
-        width: 100% !important;
-        margin-top: 30px;
-      }
-      .features {
-        padding: 50px 20px !important;
-      }
-      .features-grid {
-        flex-direction: column !important;
+      font-family: &quot;Inter&quot;, Arial, sans-serif;
+      background: linear-gradient(135deg, #f7f9ff, #edf2ff);
+      overflow-x: hidden;
+      position: relative;
+    "
+  >
+    <!-- NAVBAR -->
+    <div
+      class="navbar"
+      style="
+        background: rgba(13, 71, 161, 0.95);
+        backdrop-filter: blur(10px);
+        color: white;
+        padding: 20px 60px;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-      }
-      .card {
-        width: 100% !important;
-        max-width: 300px;
-      }
-      .community {
-        padding: 40px 20px !important;
-      }
-    }
-  </style>
-</head>
-
-<body style="
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:#f4f8fb;
-">
-
-<!-- NAVBAR -->
-<div class="navbar" style="
-  background:#0d47a1;
-  color:white;
-  padding:20px 50px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);
-">
-  <h2 style="margin:0; font-size:24px; font-weight:600;">🏨 Smart Hostel</h2>
-  <div>
-    <a href="auth/login.html" style="color:white; margin-right:20px; text-decoration:none; padding:8px 12px; border-radius:4px;" onmouseover="this.style.backgroundColor='#1976d2'; this.style.color='white'" onmouseout="this.style.backgroundColor='transparent'; this.style.color='white'">Login</a>
-    <a href="auth/register.html" style="
-      background:white;
-      color:#0d47a1;
-      padding:8px 16px;
-      border-radius:6px;
-      text-decoration:none;
-      font-weight:bold;
-      box-shadow:0 2px 5px rgba(0,0,0,0.2);
-    " onmouseover="this.style.backgroundColor='#f0f0f0'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.3)'" onmouseout="this.style.backgroundColor='white'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.2)'">Register</a>
-  </div>
-</div>
-
-<!-- HERO SECTION -->
-<div class="hero" style="
-  background:linear-gradient(135deg, #0d47a1, #1976d2);
-  color:white;
-  padding:100px 60px;
-  position:relative;
-">
-
-  <div class="hero-content" style="
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    max-width:1200px;
-    margin:0 auto;
-  ">
-
-    <!-- LEFT CONTENT -->
-    <div class="hero-left" style="max-width:550px;">
-
-      <h1 style="
-        font-size:50px;
-        margin-bottom:25px;
-        line-height:1.1;
-        font-weight:700;
-      ">
-        Smart Hostel<br>
-        Management System
-      </h1>
-
-      <p style="
-        font-size:20px;
-        line-height:1.6;
-        opacity:0.95;
-        margin-bottom:35px;
-      ">
-        A community-driven digital platform that transforms traditional hostel
-        administration into a transparent, efficient, and student-friendly system
-        using modern web technologies.
-      </p>
-
-      <a href="auth/login.html" style="
-        background:white;
-        color:#0d47a1;
-        padding:16px 32px;
-        font-size:18px;
-        text-decoration:none;
-        border-radius:50px;
-        margin-right:20px;
-        font-weight:bold;
-        display:inline-block;
-        box-shadow:0 4px 15px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
-      " onmouseover="this.style.backgroundColor='#f0f0f0'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)'" onmouseout="this.style.backgroundColor='white'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'">
-        Get Started
-      </a>
-
-      <a href="#features" style="
-        border:2px solid white;
-        color:white;
-        padding:14px 30px;
-        font-size:18px;
-        text-decoration:none;
-        border-radius:50px;
-        display:inline-block;
-        transition: all 0.3s ease;
-      " onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'; this.style.borderColor='#ffffff'" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='white'">
-        View Features
-      </a>
-
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      "
+    >
+      <h2 style="margin: 0; font-size: 24px; font-weight: 600">
+        🏨 Smart Hostel
+      </h2>
+      <div>
+        <a
+          href="auth/login.html"
+          style="
+            color: white;
+            margin-right: 20px;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+          "
+          onmouseover="
+            this.style.backgroundColor = '#1976d2';
+            this.style.color = 'white';
+          "
+          onmouseout="
+            this.style.backgroundColor = 'transparent';
+            this.style.color = 'white';
+          "
+          >Login</a
+        >
+        <a
+          href="auth/register.html"
+          style="
+            background: white;
+            color: #0d47a1;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+          "
+          onmouseover="
+            this.style.backgroundColor = '#f0f0f0';
+            this.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
+          "
+          onmouseout="
+            this.style.backgroundColor = 'white';
+            this.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+          "
+          >Register</a
+        >
+      </div>
     </div>
 
-    <!-- RIGHT VISUAL -->
-    <div class="hero-right" style="
-      background:rgba(255,255,255,0.15);
-      padding:35px;
-      border-radius:25px;
-      width:380px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.25);
-      backdrop-filter:blur(10px);
-    ">
+    <!-- HERO SECTION -->
+    <div
+      class="hero"
+      style="
+        background: linear-gradient(135deg, #0d47a1, #1565c0, #1e88e5);
+        color: white;
+        padding: 120px 60px;
+        position: relative;
+        border-bottom-left-radius: 40px;
+        border-bottom-right-radius: 40px;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
+      "
+    >
+      <div
+        class="hero-content"
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          max-width: 1200px;
+          margin: 0 auto;
+        "
+      >
+        <!-- LEFT CONTENT -->
+        <div class="hero-left" style="max-width: 550px">
+          <h1
+            style="
+              font-size: 50px;
+              margin-bottom: 25px;
+              line-height: 1.1;
+              font-weight: 700;
+            "
+          >
+            Smart Hostel<br />
+            Management System
+          </h1>
 
-      <h3 style="text-align:center; margin-bottom:30px; font-size:22px; font-weight:600;">
-        Why Smart Hostel?
-      </h3>
+          <p
+            style="
+              font-size: 20px;
+              line-height: 1.6;
+              opacity: 0.95;
+              margin-bottom: 35px;
+            "
+          >
+            A community-driven digital platform that transforms traditional
+            hostel administration into a transparent, efficient, and
+            student-friendly system using modern web technologies.
+          </p>
 
-      <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-        <div style="text-align:center; flex:1;">
-          <h2 style="margin:0; font-size:30px;">📄</h2>
-          <p style="margin:8px 0; font-weight:500;">Paperless</p>
+          <a
+            href="auth/login.html"
+            style="
+              background: white;
+              color: #0d47a1;
+              padding: 16px 34px;
+              font-size: 18px;
+              text-decoration: none;
+              border-radius: 50px;
+              margin-right: 20px;
+              font-weight: 600;
+              display: inline-block;
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+              transition: all 0.3s ease;
+            "
+            onmouseover="this.style.transform = 'translateY(-3px)'"
+            onmouseout="this.style.transform = 'translateY(0)'"
+          >
+            Get Started
+          </a>
+
+          <a
+            href="#features"
+            style="
+              border: 2px solid white;
+              color: white;
+              padding: 14px 30px;
+              font-size: 18px;
+              text-decoration: none;
+              border-radius: 50px;
+              display: inline-block;
+              transition: all 0.3s ease;
+            "
+            onmouseover="
+              this.style.backgroundColor = 'rgba(255,255,255,0.1)';
+              this.style.borderColor = '#ffffff';
+            "
+            onmouseout="
+              this.style.backgroundColor = 'transparent';
+              this.style.borderColor = 'white';
+            "
+          >
+            View Features
+          </a>
         </div>
-        <div style="text-align:center; flex:1;">
-          <h2 style="margin:0; font-size:30px;">☁️</h2>
-          <p style="margin:8px 0; font-weight:500;">Cloud</p>
-        </div>
-        <div style="text-align:center; flex:1;">
-          <h2 style="margin:0; font-size:30px;">🔒</h2>
-          <p style="margin:8px 0; font-weight:500;">Secure</p>
+
+        <!-- RIGHT VISUAL -->
+        <div
+          class="hero-right"
+          style="
+            background: rgba(255, 255, 255, 0.15);
+            padding: 35px;
+            border-radius: 25px;
+            width: 380px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+          "
+        >
+          <h3
+            style="
+              text-align: center;
+              margin-bottom: 30px;
+              font-size: 22px;
+              font-weight: 600;
+            "
+          >
+            Why Smart Hostel?
+          </h3>
+
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 20px;
+            "
+          >
+            <div style="text-align: center; flex: 1">
+              <h2 style="margin: 0; font-size: 30px">📄</h2>
+              <p style="margin: 8px 0; font-weight: 500">Paperless</p>
+            </div>
+            <div style="text-align: center; flex: 1">
+              <h2 style="margin: 0; font-size: 30px">☁️</h2>
+              <p style="margin: 8px 0; font-weight: 500">Cloud</p>
+            </div>
+            <div style="text-align: center; flex: 1">
+              <h2 style="margin: 0; font-size: 30px">🔒</h2>
+              <p style="margin: 8px 0; font-weight: 500">Secure</p>
+            </div>
+          </div>
+
+          <div
+            style="
+              background: rgba(255, 255, 255, 0.2);
+              padding: 18px;
+              border-radius: 15px;
+              text-align: center;
+              font-size: 16px;
+              line-height: 1.5;
+            "
+          >
+            Designed for students, wardens, and administrators to ensure
+            transparency, accountability, and community wellbeing.
+          </div>
         </div>
       </div>
+    </div>
 
-      <div style="
-        background:rgba(255,255,255,0.2);
-        padding:18px;
-        border-radius:15px;
-        text-align:center;
-        font-size:16px;
-        line-height:1.5;
-      ">
-        Designed for students, wardens, and administrators to ensure
-        transparency, accountability, and community wellbeing.
+    <!-- FEATURES -->
+    <div id="features" style="padding: 70px 50px; background: #ffffff">
+      <h2 style="text-align: center; color: #0d47a1">Key Features</h2>
+
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          gap: 30px;
+          margin-top: 40px;
+          flex-wrap: wrap;
+        "
+      >
+        <div
+          class="card"
+          style="
+            background: white;
+            width: 280px;
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+            transition: 0.3s ease;
+          "
+          onmouseover="this.style.transform = 'translateY(-8px)'"
+          onmouseout="this.style.transform = 'translateY(0)'"
+        >
+          <h3>👨‍🎓 Student Portal</h3>
+          <p>Room details, complaints, notices and leave management.</p>
+        </div>
+
+        <div
+          class="card"
+          style="
+            background: white;
+            width: 280px;
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+            transition: 0.3s ease;
+          "
+          onmouseover="this.style.transform = 'translateY(-8px)'"
+          onmouseout="this.style.transform = 'translateY(0)'"
+        >
+          <h3>👨‍💼 Admin Control</h3>
+          <p>Manage students, rooms, complaints and announcements.</p>
+        </div>
+
+        <div
+          class="card"
+          style="
+            background: white;
+            width: 280px;
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+            transition: 0.3s ease;
+          "
+          onmouseover="this.style.transform = 'translateY(-8px)'"
+          onmouseout="this.style.transform = 'translateY(0)'"
+        >
+          <h3>☁️ Cloud Based</h3>
+          <p>Firebase authentication and real-time database support.</p>
+        </div>
       </div>
-
     </div>
 
-  </div>
-</div>
-
-
-<!-- FEATURES -->
-<div id="features" style="padding:70px 50px; background:#ffffff;">
-
-  <h2 style="text-align:center; color:#0d47a1;">Key Features</h2>
-
-  <div style="
-    display:flex;
-    justify-content:center;
-    gap:30px;
-    margin-top:40px;
-    flex-wrap:wrap;
-  ">
-
-    <div class="card" style="
-      background:#f4f8fb;
-      width:260px;
-      padding:25px;
-      border-radius:8px;
-      text-align:center;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    ">
-      <h3>👨‍🎓 Student Portal</h3>
-      <p>Room details, complaints, notices and leave management.</p>
+    <!-- COMMUNITY IMPACT -->
+    <div
+      class="community"
+      style="background: #e3f2fd; padding: 70px 50px; text-align: center"
+    >
+      <!-- FOOTER -->
+      <div
+        style="
+          background: #0d47a1;
+          color: white;
+          text-align: center;
+          padding: 15px;
+        "
+      >
+        <p style="margin: 0">
+          Second Year Community Project | Smart Hostel Management System
+        </p>
+      </div>
     </div>
-
-    <div class="card" style="
-      background:#f4f8fb;
-      width:260px;
-      padding:25px;
-      border-radius:8px;
-      text-align:center;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    ">
-      <h3>👨‍💼 Admin Control</h3>
-      <p>Manage students, rooms, complaints and announcements.</p>
-    </div>
-
-    <div class="card" style="
-      background:#f4f8fb;
-      width:260px;
-      padding:25px;
-      border-radius:8px;
-      text-align:center;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    ">
-      <h3>☁️ Cloud Based</h3>
-      <p>Firebase authentication and real-time database support.</p>
-    </div>
-  </div>
-
-<!-- COMMUNITY IMPACT -->
-<div class="community" style="
-  background:#e3f2fd;
-  padding:70px 50px;
-  text-align:center;
-">
-
-
-<!-- FOOTER -->
-<div style="
-  background:#0d47a1;
-  color:white;
-  text-align:center;
-  padding:15px;
-">
-  <p style="margin:0;">
-    Second Year Community Project | Smart Hostel Management System
-  </p>
-</div>
-
-</body>
+  </body>
 </html>

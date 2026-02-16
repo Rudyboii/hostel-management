@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Complaints | Smart Hostel</title>
+</head>
+
+<body style="margin:0;font-family:Segoe UI,Arial;background:#eef3f9;">
+
+<!-- HEADER -->
+<div style="
+  background:#0d47a1;
+  color:white;
+  padding:16px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+">
+  <h3 style="margin:0;">My Complaints</h3>
+  <a href="javascript:history.back()" style="color:white;text-decoration:none;">
+    ← Back
+  </a>
+</div>
+
+<!-- CONTENT -->
+<div style="max-width:1000px;margin:40px auto;padding:0 20px;">
+  <div id="complaintList">
+    Loading your complaints...
+  </div>
+</div>
+
+<!-- FIREBASE LOGIC -->
+<script type="module">
+import { auth, db } from "../src/config.js";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const list = document.getElementById("complaintList");
+
+auth.onAuthStateChanged((user) => {
+
+  if (!user) {
+    window.location.href = "../auth/login.html";
+    return;
+  }
+
+  list.innerHTML = "Loading your complaints...";
+
+  const q = query(
+    collection(db, "complaints"),
+    where("studentEmail", "==", user.email),
+    orderBy("createdAt", "desc")
+  );
+
+  onSnapshot(q,
+    (snapshot) => {
+      list.innerHTML = "";
+
+      if (snapshot.empty) {
+        list.innerHTML = "<p>You have not submitted any complaints yet.</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const c = doc.data();
+
+        const card = document.createElement("div");
+        card.style = `
+          background:white;
+          padding:25px;
+          border-radius:16px;
+          margin-bottom:20px;
+          box-shadow:0 10px 25px rgba(0,0,0,.1);
+        `;
+
+        const statusColor =
+          c.status === "resolved" ? "#2e7d32" : "#f9a825";
+
+        const statusText =
+          c.status === "resolved" ? "Resolved" : "Pending";
+
+        card.innerHTML = `
+          <h3>${c.type}</h3>
+          <p><b>Room:</b> ${c.room}</p>
+          <p style="color:#555;">${c.description}</p>
+          <span style="
+            display:inline-block;
+            margin-top:10px;
+            padding:6px 14px;
+            border-radius:20px;
+            background:${statusColor};
+            color:white;
+            font-size:13px;
+          ">
+            ${statusText}
+          </span>
+        `;
+
+        list.appendChild(card);
+      });
+    },
+    (error) => {
+      console.error("Snapshot error:", error);
+      list.innerHTML = "<p style='color:red;'>Error loading complaints.</p>";
+    }
+  );
+
+});
+</script>
+
+</body>
+</html>
