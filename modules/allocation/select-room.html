@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+  <title>Select Room</title>
+  <style>
+    body { font-family: Inter; background:#f4f7fb; margin:0; }
+    .container { max-width:1200px; margin:60px auto; padding:20px; }
+    h1 { text-align:center; color:#0d47a1; margin-bottom:40px; }
+
+    .floor-section { margin-bottom:50px; }
+    .floor-title {
+      font-size:22px;
+      font-weight:600;
+      margin-bottom:20px;
+      color:#0d47a1;
+      border-left:5px solid #1976d2;
+      padding-left:10px;
+    }
+
+    .room-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:20px;
+    }
+
+    .room-card {
+      background:white;
+      padding:25px;
+      border-radius:12px;
+      box-shadow:0 10px 25px rgba(0,0,0,0.06);
+      transition:0.3s;
+      cursor:pointer;
+    }
+
+    .room-card:hover {
+      transform:translateY(-5px);
+      box-shadow:0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .room-number {
+      font-size:18px;
+      font-weight:600;
+      margin-bottom:8px;
+    }
+
+    .available { color:green; font-weight:500; }
+    .full { color:red; font-weight:500; }
+
+    .disabled {
+      background:#f1f1f1;
+      cursor:not-allowed;
+      opacity:0.6;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Select Your Room</h1>
+  <div id="floorsContainer"></div>
+</div>
+
+<script type="module">
+
+import { db } from "../../src/config.js";
+import { collection, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const floorsContainer = document.getElementById("floorsContainer");
+
+onSnapshot(collection(db, "rooms"), (snapshot) => {
+
+  floorsContainer.innerHTML = "";
+
+  const floors = {};
+
+  snapshot.forEach(docSnap => {
+    const room = docSnap.data();
+
+    if (!floors[room.floor]) {
+      floors[room.floor] = [];
+    }
+
+    floors[room.floor].push({
+      id: docSnap.id,
+      ...room
+    });
+  });
+
+  Object.keys(floors).sort().forEach(floor => {
+
+    const section = document.createElement("div");
+    section.className = "floor-section";
+
+    section.innerHTML = `
+      <div class="floor-title">Floor ${floor}</div>
+      <div class="room-grid"></div>
+    `;
+
+    const grid = section.querySelector(".room-grid");
+
+    floors[floor].forEach(room => {
+
+      const isFull = room.availableBeds === 0;
+
+      const card = document.createElement("div");
+      card.className = "room-card" + (isFull ? " disabled" : "");
+
+      card.innerHTML = `
+        <div class="room-number">Room ${room.roomNumber}</div>
+        <div class="${isFull ? 'full' : 'available'}">
+          ${isFull ? "Full" : room.availableBeds + " Beds Available"}
+        </div>
+      `;
+
+      if (!isFull) {
+        card.onclick = () => {
+          window.location.href = "select-bed.html?room=" + room.id;
+        };
+      }
+
+      grid.appendChild(card);
+    });
+
+    floorsContainer.appendChild(section);
+  });
+
+});
+
+</script>
+
+</body>
+</html>

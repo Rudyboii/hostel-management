@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+  <title>Select Bed</title>
+  <style>
+    body { font-family: Inter; background:#f4f7fb; margin:0; }
+    .container { max-width:700px; margin:80px auto; text-align:center; }
+    .beds { display:flex; gap:20px; justify-content:center; margin-top:30px; }
+
+    .bed {
+      padding:20px 40px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:0.3s;
+      font-weight:500;
+    }
+
+    .available { background:#e3f2fd; }
+    .available:hover { background:#1976d2; color:white; }
+
+    .occupied {
+      background:#fdecea;
+      cursor:not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 id="roomTitle"></h2>
+  <div class="beds" id="bedsContainer"></div>
+</div>
+
+<script type="module">
+
+import { db, auth } from "../../src/config.js";
+import { doc, getDoc, runTransaction, onSnapshot }
+from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const urlParams = new URLSearchParams(window.location.search);
+const roomId = urlParams.get("room");
+
+const bedsContainer = document.getElementById("bedsContainer");
+
+auth.onAuthStateChanged(user => {
+
+  if (!user) {
+    alert("Please login first");
+    return;
+  }
+
+  const roomRef = doc(db, "rooms", roomId);
+
+  onSnapshot(roomRef, async (roomSnap) => {
+
+    const room = roomSnap.data();
+    document.getElementById("roomTitle").innerText =
+      "Room " + room.roomNumber;
+
+    bedsContainer.innerHTML = "";
+
+    room.beds.forEach((bed, index) => {
+
+      const div = document.createElement("div");
+      div.className = "bed " + (bed.occupied ? "occupied" : "available");
+      div.innerText = bed.occupied
+        ? "Occupied"
+        : "Bed " + bed.bedNo;
+
+      if (!bed.occupied) {
+        div.onclick = async () => {
+
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+          const userData = userSnap.data();
+
+          await runTransaction(db, async (transaction) => {
+
+            const freshRoom = await transaction.get(roomRef);
+            const freshUser = await transaction.get(userRef);
+
+            if (freshUser.data().locked) {
+              throw "Room already assigned!";
+            }
+
+            const beds = freshRoom.data().beds;
+
+            if (beds[index].occupied) {
+              throw "Bed already taken!";
+            }
+
+            beds[index] = {
+              bedNo: bed.bedNo,
+              occupied: true,
+              studentId: user.uid,
+              studentName: userData.name,
+              studentEmail: userData.email
+            };
+
+            transaction.update(roomRef, {
+              beds: beds,
+              availableBeds: freshRoom.data().availableBeds - 1
+            });
+
+            transaction.update(userRef, {
+              roomId: roomId,
+              bedNo: bed.bedNo,
+              locked: true,
+              profileCompleted: true
+            });
+
+          });
+
+          alert("Room Assigned Successfully!");
+          window.location.href = "../../dashboard/student.html";
+        };
+      }
+
+      bedsContainer.appendChild(div);
+    });
+
+  });
+
+});
+
+</script>
+
+</body>
+</html>

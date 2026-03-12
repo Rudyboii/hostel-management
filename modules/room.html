@@ -12,7 +12,7 @@
   color:#222;
 ">
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <div style="
   background:#0d47a1;
   color:white;
@@ -31,12 +31,8 @@
   </a>
 </div>
 
-<!-- ================= HERO ================= -->
-<div style="
-  max-width:900px;
-  margin:40px auto 20px;
-  padding:0 20px;
-">
+<!-- HERO -->
+<div style="max-width:900px;margin:40px auto 20px;padding:0 20px;">
   <div style="
     background:linear-gradient(135deg,#1976d2,#42a5f5);
     color:white;
@@ -51,12 +47,8 @@
   </div>
 </div>
 
-<!-- ================= ROOM DETAILS ================= -->
-<div style="
-  max-width:900px;
-  margin:30px auto 60px;
-  padding:0 20px;
-">
+<!-- ROOM DETAILS -->
+<div style="max-width:900px;margin:30px auto 60px;padding:0 20px;">
 
   <div style="
     background:white;
@@ -67,7 +59,6 @@
 
     <h2 style="margin-top:0;">Accommodation Information</h2>
 
-    <!-- DETAILS GRID -->
     <div style="
       display:grid;
       grid-template-columns:repeat(2,1fr);
@@ -77,37 +68,31 @@
 
       <div>
         <strong>Hostel Name</strong>
-        <p style="margin:6px 0;color:#555;">Boys Hostel – A Block</p>
+        <p id="hostelName" style="margin:6px 0;color:#555;"></p>
       </div>
 
       <div>
         <strong>Room Number</strong>
-        <p style="margin:6px 0;color:#555;">203</p>
+        <p id="roomNumber" style="margin:6px 0;color:#555;"></p>
       </div>
 
       <div>
         <strong>Floor</strong>
-        <p style="margin:6px 0;color:#555;">Second Floor</p>
-      </div>
-
-      <div>
-        <strong>Room Type</strong>
-        <p style="margin:6px 0;color:#555;">Shared (2 Students)</p>
+        <p id="floor" style="margin:6px 0;color:#555;"></p>
       </div>
 
       <div>
         <strong>Bed Number</strong>
-        <p style="margin:6px 0;color:#555;">Bed – 1</p>
+        <p id="bedNumber" style="margin:6px 0;color:#555;"></p>
       </div>
 
       <div>
         <strong>Allotted Date</strong>
-        <p style="margin:6px 0;color:#555;">01 August 2025</p>
+        <p id="allottedDate" style="margin:6px 0;color:#555;"></p>
       </div>
 
     </div>
 
-    <!-- ROOM STATUS -->
     <div style="
       margin-top:30px;
       padding:18px;
@@ -125,7 +110,7 @@
 
 </div>
 
-<!-- ================= FOOTER ================= -->
+<!-- FOOTER -->
 <div style="
   background:#0d47a1;
   color:white;
@@ -135,6 +120,60 @@
 ">
   Smart Hostel Management System
 </div>
+
+<script type="module">
+
+import { auth, db } from "../src/config.js";
+import { doc, getDoc } 
+from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+auth.onAuthStateChanged(async (user) => {
+
+  if (!user) {
+    window.location.href = "../auth/login.html";
+    return;
+  }
+
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists()) {
+    alert("User data missing");
+    return;
+  }
+
+  const userData = userSnap.data();
+
+  // 🚨 1️⃣ No room selected
+  if (!userData.roomId) {
+    window.location.href = "./allocation/select-room.html";
+    return;
+  }
+
+  // 🚨 2️⃣ Room selected but no bed assigned
+  if (userData.roomId && !userData.bedNo) {
+    window.location.href =
+      "./allocation/select-bed.html?room=" + userData.roomId;
+    return;
+  }
+
+  // ✅ 3️⃣ Fully assigned → show room page
+
+  document.getElementById("roomNumber").innerText = userData.roomId;
+
+  document.getElementById("floor").innerText =
+    "Floor " + Math.floor(userData.roomId / 100);
+
+  document.getElementById("bedNumber").innerText =
+    "Bed " + userData.bedNo;
+
+  const date = new Date(userData.allottedAt || Date.now());
+  document.getElementById("allottedDate").innerText =
+    date.toDateString();
+
+});
+
+</script>
 
 </body>
 </html>

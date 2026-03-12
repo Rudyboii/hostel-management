@@ -1,130 +1,135 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Login | Smart Hostel</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login | Smart Hostel</title>
+  </head>
 
-<body style="
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:#0d47a1;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-">
+  <body
+    style="
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0d47a1;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    "
+  >
+    <!-- POPUP CARD -->
+    <div
+      style="
+        background: white;
+        width: 380px;
+        padding: 35px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      "
+    >
+      <h2 style="color: #0d47a1; margin-bottom: 10px">Smart Hostel Login</h2>
 
-<!-- POPUP CARD -->
-<div style="
-  background:white;
-  width:380px;
-  padding:35px;
-  border-radius:12px;
-  text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,0.3);
-">
+      <p style="color: #555; margin-bottom: 25px">
+        Continue using your Google account
+      </p>
 
-  <h2 style="color:#0d47a1;margin-bottom:10px;">
-    Smart Hostel Login
-  </h2>
+      <!-- GOOGLE BUTTON -->
+      <button
+        id="googleBtn"
+        style="
+          width: 100%;
+          padding: 14px;
+          background: #db4437;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 16px;
+          cursor: pointer;
+        "
+      >
+        Continue with Google
+      </button>
 
-  <p style="color:#555;margin-bottom:25px;">
-    Continue using your Google account
-  </p>
+      <p style="margin-top: 20px; font-size: 13px; color: #777">
+        Secure login powered by Firebase
+      </p>
 
-  <!-- GOOGLE BUTTON -->
-  <button id="googleBtn" style="
-    width:100%;
-    padding:14px;
-    background:#db4437;
-    color:white;
-    border:none;
-    border-radius:6px;
-    font-size:16px;
-    cursor:pointer;
-  ">
-    Continue with Google
-  </button>
+      <a
+        href="../index.html"
+        style="
+          display: inline-block;
+          margin-top: 15px;
+          color: #0d47a1;
+          text-decoration: none;
+          font-size: 14px;
+        "
+      >
+        ← Back to Home
+      </a>
+    </div>
 
-  <p style="margin-top:20px;font-size:13px;color:#777;">
-    Secure login powered by Firebase
-  </p>
+    <!-- GOOGLE LOGIN LOGIC -->
+    <script type="module">
+      import { auth, db } from "../src/config.js";
 
-  <a href="../index.html" style="
-    display:inline-block;
-    margin-top:15px;
-    color:#0d47a1;
-    text-decoration:none;
-    font-size:14px;
-  ">
-    ← Back to Home
-  </a>
+      import {
+        GoogleAuthProvider,
+        signInWithPopup,
+      } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-</div>
+      import {
+        doc,
+        getDoc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
-<!-- GOOGLE LOGIN LOGIC -->
-<script type="module">
-import { auth, db } from "../src/config.js";
+      const btn = document.getElementById("googleBtn");
+      let popupInProgress = false;
 
-import {
-  GoogleAuthProvider,
-  signInWithPopup
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+      btn.addEventListener("click", async () => {
+        if (popupInProgress) return;
+        popupInProgress = true;
 
-import {
-  doc, getDoc, setDoc
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        btn.disabled = true;
+        btn.innerText = "Signing in...";
 
-const btn = document.getElementById("googleBtn");
-let popupInProgress = false;
+        try {
+          const provider = new GoogleAuthProvider();
+          const result = await signInWithPopup(auth, provider);
 
-btn.addEventListener("click", async () => {
-  if (popupInProgress) return;
-  popupInProgress = true;
+          const user = result.user;
+          const userRef = doc(db, "users", user.uid);
+          const snap = await getDoc(userRef);
 
-  btn.disabled = true;
-  btn.innerText = "Signing in...";
+          // First-time login → save user
+          if (!snap.exists()) {
+            await setDoc(userRef, {
+              name: user.displayName,
+              email: user.email,
+              role: "student",
+            });
+          }
 
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
+          // Redirect based on role
+          const finalSnap = await getDoc(userRef);
+          const role = finalSnap.data().role;
 
-    const user = result.user;
-    const userRef = doc(db, "users", user.uid);
-    const snap = await getDoc(userRef);
+          if (role === "admin") {
+            window.location.href = "../dashboard/admin.html";
+          } else {
+            window.location.href = "../dashboard/student.html";
+          }
+        } catch (err) {
+          popupInProgress = false;
+          btn.disabled = false;
+          btn.innerText = "Continue with Google";
 
-    // First-time login → save user
-    if (!snap.exists()) {
-      await setDoc(userRef, {
-        name: user.displayName,
-        email: user.email,
-        role: "student"
+          // Ignore harmless cancel popup error
+          if (err.code !== "auth/cancelled-popup-request") {
+            alert(err.message);
+          }
+        }
       });
-    }
-
-    // Redirect based on role
-    const finalSnap = await getDoc(userRef);
-    const role = finalSnap.data().role;
-
-    if (role === "admin") {
-      window.location.href = "../dashboard/admin.html";
-    } else {
-      window.location.href = "../dashboard/student.html";
-    }
-
-  } catch (err) {
-    popupInProgress = false;
-    btn.disabled = false;
-    btn.innerText = "Continue with Google";
-
-    // Ignore harmless cancel popup error
-    if (err.code !== "auth/cancelled-popup-request") {
-      alert(err.message);
-    }
-  }
-});
-</script>
-
-</body>
+    </script>
+  </body>
 </html>
